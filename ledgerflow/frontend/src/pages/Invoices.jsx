@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FileText, Plus, ChevronDown, Search, Trash2, Download, FileDown, CreditCard, Printer } from 'lucide-react';
 import api from '../api/axios';
 import PaymentModal from '../components/PaymentModal';
 
-const fmt = (n) => `₹${Number(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+const fmt = (n) => `â‚¹${Number(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
 const fmtDate = (d) => new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
 const statusBadge = (s) => {
   const map = { PAID: 'badge-paid', UNPAID: 'badge-unpaid', OVERDUE: 'badge-overdue', CANCELLED: 'badge-cancelled' };
@@ -154,7 +154,7 @@ export default function Invoices() {
                   {inv.status === 'UNPAID' && (
                     <button onClick={() => updateStatus(inv.id, 'PAID')} disabled={updatingId === inv.id}
                       className="text-xs px-3 py-2 bg-green-500/20 text-green-300 border border-green-400/30 rounded-lg font-medium flex-1">
-                      {updatingId === inv.id ? '...' : '✓ Paid'}
+                      {updatingId === inv.id ? '...' : 'âœ“ Paid'}
                     </button>
                   )}
                 </div>
@@ -221,4 +221,6 @@ export default function Invoices() {
     </div>
   );
 }
+
+
 

@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -13,6 +13,9 @@ import CreateInvoice from './pages/CreateInvoice';
 import Expenses from './pages/Expenses';
 
 import Businesses from './pages/Businesses';
+
+// Wake up Render backend on app load
+fetch('https://ledger-matrix.onrender.com/api/health').catch(() => {});
 
 export default function App() {
   return (
@@ -36,3 +39,4 @@ export default function App() {
     </AuthProvider>
   );
 }
+
