@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 160" fill="none">
+  <!-- M shape left leg -->
+  <polygon points="10,140 10,20 38,20 38,95" fill="url(#leftLeg)"/>
+  <!-- M shape left diagonal -->
+  <polygon points="10,20 38,20 90,75 62,75" fill="url(#leftDiag)"/>
+  <!-- M shape right diagonal -->
+  <polygon points="118,75 90,75 142,20 170,20" fill="url(#rightDiag)"/>
+  <!-- M shape right leg -->
+  <polygon points="142,20 170,20 170,140 142,140" fill="url(#rightLeg)"/>
+  <!-- Bottom fill left -->
+  <polygon points="10,140 38,140 38,95 10,140" fill="url(#bottomLeft)"/>
+  <!-- Bottom fill right -->
+  <polygon points="142,95 170,140 142,140" fill="url(#bottomRight)"/>
+
+  <!-- Bar chart inside M (bottom center) -->
+  <rect x="52" y="105" width="11" height="35" rx="1.5" fill="url(#bar1)"/>
+  <rect x="67" y="90"  width="11" height="50" rx="1.5" fill="url(#bar2)"/>
+  <rect x="82" y="98"  width="11" height="42" rx="1.5" fill="url(#bar3)"/>
+  <rect x="97" y="108" width="11" height="32" rx="1.5" fill="url(#bar4)"/>
+
+  <!-- LEDGER text -->
+  <text x="195" y="90" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="52" fill="#0f1e3d" letter-spacing="2">LEDGER</text>
+  <!-- MATRIX text -->
+  <text x="215" y="138" font-family="Arial, sans-serif" font-weight="400" font-size="32" fill="#22d3ee" letter-spacing="8">MATRIX</text>
+
+  <defs>
+    <!-- M gradients -->
+    <linearGradient id="leftLeg" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+    <linearGradient id="leftDiag" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+    <linearGradient id="rightDiag" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+    <linearGradient id="rightLeg" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#1d4ed8"/>
+      <stop offset="100%" stop-color="#1e3a8a"/>
+    </linearGradient>
+    <linearGradient id="bottomLeft" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#1d4ed8"/>
+      <stop offset="100%" stop-color="#1e3a8a"/>
+    </linearGradient>
+    <linearGradient id="bottomRight" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#1d4ed8"/>
+      <stop offset="100%" stop-color="#1e3a8a"/>
+    </linearGradient>
+    <!-- Bar gradients (white/light blue) -->
+    <linearGradient id="bar1" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#bfdbfe"/>
+      <stop offset="100%" stop-color="#93c5fd"/>
+    </linearGradient>
+    <linearGradient id="bar2" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#e0f2fe"/>
+      <stop offset="100%" stop-color="#bae6fd"/>
+    </linearGradient>
+    <linearGradient id="bar3" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#bfdbfe"/>
+      <stop offset="100%" stop-color="#93c5fd"/>
+    </linearGradient>
+    <linearGradient id="bar4" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#dbeafe"/>
+      <stop offset="100%" stop-color="#bfdbfe"/>
+    </linearGradient>
+  </defs>
+</svg>
