@@ -59,8 +59,22 @@ router.get('/invoice/:id', async (req, res, next) => {
 
     // HEADER
     dRect(ML,y,CW,88,'#ffffff');
-    dRect(ML+4,y+4,62,62,LG);
-    doc.font('Helvetica').fontSize(7).fillColor(G).text('Your Logo',ML+4,y+30,{width:62,align:'center'});
+    if (I.logo_url && I.logo_url.startsWith('data:image')) {
+      try {
+        const base64Data = I.logo_url.split(',')[1];
+        const imgBuffer = Buffer.from(base64Data, 'base64');
+        doc.image(imgBuffer, ML+5, y+5, { width: 60, height: 60, fit: [60,60] });
+      } catch(e) {
+        dRect(ML+4,y+4,62,62,LG);
+        doc.font('Helvetica').fontSize(7).fillColor(G).text('Logo',ML+4,y+30,{width:62,align:'center'});
+      }
+    } else if (I.logo_url && I.logo_url.startsWith('http')) {
+      dRect(ML+4,y+4,62,62,LG);
+      doc.font('Helvetica').fontSize(7).fillColor(G).text('Logo',ML+4,y+30,{width:62,align:'center'});
+    } else {
+      dRect(ML+4,y+4,62,62,LG);
+      doc.font('Helvetica').fontSize(7).fillColor(G).text('Your Logo',ML+4,y+30,{width:62,align:'center'});
+    }
     doc.font('Helvetica-Bold').fontSize(16).fillColor(B).text(I.bn||'Your Company',ML+72,y+6,{width:CW-78});
     doc.font('Helvetica').fontSize(8.5).fillColor(G).text(I.ba||'',ML+72,y+28,{width:CW*0.6});
     doc.font('Helvetica-Bold').fontSize(8.5).fillColor(B).text('Phone: '+(I.bp||'-'),ML+72,y+54);
