@@ -46,7 +46,7 @@ export default function Invoices() {
 
   const downloadPDF = (id, num) => {
     const token = localStorage.getItem('lf_token');
-    fetch(`http://localhost:5000/api/pdf/invoice/${id}`, { headers: { Authorization: `Bearer ${token}` } })
+    fetch(`https://ledger-matrix.onrender.com/api/pdf/invoice/${id}`, { headers: { Authorization: `Bearer ${token}` } })
       .then(r => r.blob()).then(blob => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -58,7 +58,7 @@ export default function Invoices() {
 
   const printInvoice = (id, num) => {
     const token = localStorage.getItem('lf_token');
-    fetch(`http://localhost:5000/api/pdf/invoice/${id}`, { headers: { Authorization: `Bearer ${token}` } })
+    fetch(`https://ledger-matrix.onrender.com/api/pdf/invoice/${id}`, { headers: { Authorization: `Bearer ${token}` } })
       .then(r => r.blob()).then(blob => {
         const url = URL.createObjectURL(blob);
         const win = window.open(url);
@@ -68,7 +68,7 @@ export default function Invoices() {
 
   const exportInvoices = (format) => {
     const token = localStorage.getItem('lf_token');
-    fetch(`http://localhost:5000/api/export/invoices?format=${format}`, { headers: { Authorization: `Bearer ${token}` } })
+    fetch(`https://ledger-matrix.onrender.com/api/export/invoices?format=${format}`, { headers: { Authorization: `Bearer ${token}` } })
       .then(r => r.blob()).then(blob => {
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
@@ -79,7 +79,7 @@ export default function Invoices() {
 
   const exportGSTR1 = () => {
     const token = localStorage.getItem('lf_token');
-    fetch(`http://localhost:5000/api/export/gstr1?format=xlsx`, { headers: { Authorization: `Bearer ${token}` } })
+    fetch(`https://ledger-matrix.onrender.com/api/export/gstr1?format=xlsx`, { headers: { Authorization: `Bearer ${token}` } })
       .then(r => r.blob()).then(blob => {
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
@@ -221,3 +221,4 @@ export default function Invoices() {
     </div>
   );
 }
+
