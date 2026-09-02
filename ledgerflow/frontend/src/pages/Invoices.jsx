@@ -4,13 +4,14 @@ import { FileText, Plus, ChevronDown, Search, Trash2, Download, FileDown, Credit
 import api from '../api/axios';
 import PaymentModal from '../components/PaymentModal';
 
-const fmt = (n) => `â‚¹${Number(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+const fmt = (n) => 'Rs.' + Number(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 });
 const fmtDate = (d) => new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
 const statusBadge = (s) => {
   const map = { PAID: 'badge-paid', UNPAID: 'badge-unpaid', OVERDUE: 'badge-overdue', CANCELLED: 'badge-cancelled' };
-  return <span className={map[s] || 'badge-unpaid'}>{s}</span>;
+  return React.createElement('span', { className: map[s] || 'badge-unpaid' }, s);
 };
 const STATUSES = ['ALL', 'UNPAID', 'PAID', 'OVERDUE', 'CANCELLED'];
+const API = 'https://ledger-matrix.onrender.com/api';
 
 export default function Invoices() {
   const [invoices, setInvoices] = useState([]);
@@ -27,7 +28,10 @@ export default function Invoices() {
   useEffect(() => {
     let data = invoices;
     if (statusFilter !== 'ALL') data = data.filter(i => i.status === statusFilter);
-    if (search) { const q = search.toLowerCase(); data = data.filter(i => i.invoice_number.toLowerCase().includes(q) || i.customer_name?.toLowerCase().includes(q)); }
+    if (search) {
+      const q = search.toLowerCase();
+      data = data.filter(i => i.invoice_number.toLowerCase().includes(q) || i.customer_name?.toLowerCase().includes(q));
+    }
     setFiltered(data);
   }, [invoices, search, statusFilter]);
 
@@ -39,53 +43,72 @@ export default function Invoices() {
   };
 
   const handleDelete = async (id, num) => {
-    if (!confirm(`Delete invoice ${num}? This will restore product stock.`)) return;
-    try { await api.delete(`/invoices/${id}`); load(); }
+    if (!confirm('Delete invoice ' + num + '? This will restore product stock.')) return;
+    try { await api.delete('/invoices/' + id); load(); }
     catch (err) { alert(err.response?.data?.message || 'Failed to delete invoice.'); }
   };
 
-  const downloadPDF = (id, num) => {
+  const fetchPDF = async (id) => {
     const token = localStorage.getItem('lf_token');
-    fetch(`https://ledger-matrix.onrender.com/api/pdf/invoice/${id}`, { headers: { Authorization: `Bearer ${token}` } })
-      .then(r => r.blob()).then(blob => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${num}.pdf`;
-        a.click();
-      }).catch(() => alert('Failed to generate PDF.'));
+    const url = API + '/pdf/invoice/' + id;
+    const headers = { Authorization: 'Bearer ' + token };
+    // Try up to 3 times with 4 second gaps (for Render wake-up)
+    for (let i = 0; i < 3; i++) {
+      try {
+        const r = await fetch(url, { headers });
+        if (r.ok) return await r.blob();
+        const errText = await r.text();
+        throw new Error('HTTP ' + r.status + ': ' + errText);
+      } catch (e) {
+        if (i < 2) {
+          await new Promise(res => setTimeout(res, 4000));
+        } else {
+          throw e;
+        }
+      }
+    }
   };
 
-  const printInvoice = (id, num) => {
-    const token = localStorage.getItem('lf_token');
-    fetch(`https://ledger-matrix.onrender.com/api/pdf/invoice/${id}`, { headers: { Authorization: `Bearer ${token}` } })
-      .then(r => r.blob()).then(blob => {
-        const url = URL.createObjectURL(blob);
-        const win = window.open(url);
-        win.onload = () => { win.focus(); win.print(); };
-      }).catch(() => alert('Failed to generate PDF.'));
+  const downloadPDF = async (id, num) => {
+    try {
+      const blob = await fetchPDF(id);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = num + '.pdf'; a.click();
+    } catch (e) {
+      alert('PDF failed: ' + e.message + '\nThe server may be waking up. Please try again in 30 seconds.');
+    }
+  };
+
+  const printInvoice = async (id, num) => {
+    try {
+      const blob = await fetchPDF(id);
+      const url = URL.createObjectURL(blob);
+      const win = window.open(url);
+      if (win) win.onload = () => { win.focus(); win.print(); };
+    } catch (e) {
+      alert('Print failed: ' + e.message + '\nThe server may be waking up. Please try again in 30 seconds.');
+    }
   };
 
   const exportInvoices = (format) => {
     const token = localStorage.getItem('lf_token');
-    fetch(`https://ledger-matrix.onrender.com/api/export/invoices?format=${format}`, { headers: { Authorization: `Bearer ${token}` } })
+    fetch(API + '/export/invoices?format=' + format, { headers: { Authorization: 'Bearer ' + token } })
       .then(r => r.blob()).then(blob => {
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = `invoices.${format}`;
-        a.click();
-      });
+        a.download = 'invoices.' + format; a.click();
+      }).catch(() => alert('Export failed. Server may be waking up, try again in 30s.'));
   };
 
   const exportGSTR1 = () => {
     const token = localStorage.getItem('lf_token');
-    fetch(`https://ledger-matrix.onrender.com/api/export/gstr1?format=xlsx`, { headers: { Authorization: `Bearer ${token}` } })
+    fetch(API + '/export/gstr1?format=xlsx', { headers: { Authorization: 'Bearer ' + token } })
       .then(r => r.blob()).then(blob => {
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = 'gstr1.xlsx';
-        a.click();
-      });
+        a.download = 'gstr1.xlsx'; a.click();
+      }).catch(() => alert('Export failed. Server may be waking up, try again in 30s.'));
   };
 
   return (
@@ -106,7 +129,6 @@ export default function Invoices() {
         </div>
       </div>
 
-      {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative max-w-xs w-full">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
@@ -115,7 +137,7 @@ export default function Invoices() {
         <div className="flex gap-1.5 flex-wrap">
           {STATUSES.map(s => (
             <button key={s} onClick={() => setStatusFilter(s)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${statusFilter === s ? 'bg-blue-600 text-white border-blue-600' : 'bg-white/5 text-white/60 border-white/20 hover:border-white/40'}`}>
+              className={'px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ' + (statusFilter === s ? 'bg-blue-600 text-white border-blue-600' : 'bg-white/5 text-white/60 border-white/20 hover:border-white/40')}>
               {s}
             </button>
           ))}
@@ -132,7 +154,6 @@ export default function Invoices() {
         </div>
       ) : (
         <>
-          {/* Mobile card view */}
           <div className="space-y-2 lg:hidden">
             {filtered.map(inv => (
               <div key={inv.id} className="card p-4">
@@ -154,7 +175,7 @@ export default function Invoices() {
                   {inv.status === 'UNPAID' && (
                     <button onClick={() => updateStatus(inv.id, 'PAID')} disabled={updatingId === inv.id}
                       className="text-xs px-3 py-2 bg-green-500/20 text-green-300 border border-green-400/30 rounded-lg font-medium flex-1">
-                      {updatingId === inv.id ? '...' : 'âœ“ Paid'}
+                      {updatingId === inv.id ? '...' : 'Paid'}
                     </button>
                   )}
                 </div>
@@ -162,7 +183,6 @@ export default function Invoices() {
             ))}
           </div>
 
-          {/* Desktop table */}
           <div className="table-wrapper hidden lg:block">
             <table className="table-base">
               <thead className="table-head">
@@ -181,7 +201,7 @@ export default function Invoices() {
                   <tr key={inv.id} className="tr-body">
                     <td className="td"><span className="font-mono text-xs font-semibold text-blue-400">{inv.invoice_number}</span></td>
                     <td className="td font-medium text-white">{inv.customer_name}{inv.customer_gstin && <p className="text-xs text-white/40 font-mono">{inv.customer_gstin}</p>}</td>
-                    <td className="td"><span className={`text-xs px-2 py-0.5 rounded font-medium ${inv.supply_type === 'inter' ? 'bg-purple-500/20 text-purple-300' : 'bg-blue-500/20 text-blue-300'}`}>{inv.supply_type === 'inter' ? 'IGST' : 'CGST+SGST'}</span></td>
+                    <td className="td"><span className={'text-xs px-2 py-0.5 rounded font-medium ' + (inv.supply_type === 'inter' ? 'bg-purple-500/20 text-purple-300' : 'bg-blue-500/20 text-blue-300')}>{inv.supply_type === 'inter' ? 'IGST' : 'CGST+SGST'}</span></td>
                     <td className="td text-white/50">{fmtDate(inv.due_date)}{new Date(inv.due_date) < new Date() && inv.status === 'UNPAID' && <span className="ml-2 text-xs text-red-400">(Overdue)</span>}</td>
                     <td className="td-right font-semibold text-white tabular-nums">{fmt(inv.total_amount)}</td>
                     <td className="td">{statusBadge(inv.status)}</td>
@@ -189,7 +209,7 @@ export default function Invoices() {
                       <div className="flex items-center gap-1 justify-end">
                         <button onClick={() => downloadPDF(inv.id, inv.invoice_number)} title="Download PDF" className="btn-ghost p-1.5 hover:text-blue-400"><Download size={13} /></button>
                         <button onClick={() => printInvoice(inv.id, inv.invoice_number)} title="Print" className="btn-ghost p-1.5 hover:text-green-400"><Printer size={13} /></button>
-                        {inv.status !== 'CANCELLED' && <button onClick={() => setPaymentInvoice(inv)} className={`btn-ghost p-1.5 ${inv.status === 'PAID' ? 'text-green-400' : 'hover:text-cyan-400'}`}><CreditCard size={13} /></button>}
+                        {inv.status !== 'CANCELLED' && <button onClick={() => setPaymentInvoice(inv)} className={'btn-ghost p-1.5 ' + (inv.status === 'PAID' ? 'text-green-400' : 'hover:text-cyan-400')}><CreditCard size={13} /></button>}
                         {inv.status === 'UNPAID' && <button onClick={() => updateStatus(inv.id, 'PAID')} disabled={updatingId === inv.id} className="text-xs px-2.5 py-1 bg-green-500/20 hover:bg-green-500/30 text-green-300 border border-green-400/30 rounded-lg font-medium">{updatingId === inv.id ? '...' : 'Mark Paid'}</button>}
                         <div className="relative group">
                           <button className="btn-ghost p-1.5"><ChevronDown size={13} /></button>
@@ -210,7 +230,6 @@ export default function Invoices() {
         </>
       )}
 
-      {/* Payment Modal */}
       {paymentInvoice && (
         <PaymentModal
           invoice={paymentInvoice}
@@ -221,6 +240,3 @@ export default function Invoices() {
     </div>
   );
 }
-
-
-
