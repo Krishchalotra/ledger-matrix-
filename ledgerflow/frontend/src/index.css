@@ -1,4 +1,4 @@
-@tailwind base;
+﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -10,7 +10,7 @@
 
 @layer components {
 
-  /* ── Page headers ── */
+  /* â”€â”€ Page headers â”€â”€ */
   .page-header {
     @apply flex items-center justify-between mb-6 pb-4 border-b border-white/10;
   }
@@ -21,7 +21,7 @@
     @apply text-sm text-white/50 mt-0.5;
   }
 
-  /* ── Cards — glass style ── */
+  /* â”€â”€ Cards â€” glass style â”€â”€ */
   .card {
     @apply bg-white/10 backdrop-blur-md rounded-xl border border-white/15 p-5 overflow-visible;
   }
@@ -29,7 +29,7 @@
     @apply bg-white/10 backdrop-blur-md rounded-xl border border-white/15 p-5;
   }
 
-  /* ── Buttons ── */
+  /* â”€â”€ Buttons â”€â”€ */
   .btn-primary {
     @apply bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-4 py-2 rounded-lg
            transition-colors duration-150 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed
@@ -47,7 +47,7 @@
     @apply text-white/40 hover:text-white hover:bg-white/10 text-sm px-2.5 py-1.5 rounded-lg transition-colors;
   }
 
-  /* ── Inputs ── */
+  /* â”€â”€ Inputs â”€â”€ */
   .input {
     @apply w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-sm text-white
            placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-blue-500/50
@@ -57,7 +57,7 @@
     @apply block text-sm font-medium text-white/70 mb-1.5;
   }
 
-  /* ── Tables ── */
+  /* â”€â”€ Tables â”€â”€ */
   .table-wrapper {
     @apply bg-white/10 backdrop-blur-md rounded-xl border border-white/15 overflow-hidden;
   }
@@ -83,7 +83,7 @@
     @apply border-b border-white/5 hover:bg-white/5 transition-colors;
   }
 
-  /* ── Badges ── */
+  /* â”€â”€ Badges â”€â”€ */
   .badge {
     @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium;
   }
@@ -92,12 +92,12 @@
   .badge-overdue   { @apply badge bg-red-500/20 text-red-300 ring-1 ring-red-400/30; }
   .badge-cancelled { @apply badge bg-white/10 text-white/40 ring-1 ring-white/10; }
 
-  /* ── Stat card ── */
+  /* â”€â”€ Stat card â”€â”€ */
   .stat-card {
     @apply bg-white/10 backdrop-blur-md rounded-xl border border-white/15 p-5;
   }
 
-  /* ── Alerts ── */
+  /* â”€â”€ Alerts â”€â”€ */
   .alert-warning {
     @apply flex items-start gap-3 px-4 py-3 bg-amber-500/20 border border-amber-400/30 rounded-lg text-sm text-amber-200;
   }
@@ -108,7 +108,7 @@
     @apply flex items-start gap-3 px-4 py-3 bg-blue-500/20 border border-blue-400/30 rounded-lg text-sm text-blue-200;
   }
 
-  /* ── Modal ── */
+  /* â”€â”€ Modal â”€â”€ */
   .modal-overlay {
     @apply fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm;
   }
@@ -118,14 +118,12 @@
   .modal-header {
     @apply flex items-center justify-between px-6 py-4 border-b border-white/10;
   }
-  .modal-body {
-    @apply px-6 py-5 space-y-4;
-  }
+
   .modal-footer {
     @apply flex items-center justify-end gap-3 px-6 py-4 border-t border-white/10 bg-white/5 rounded-b-2xl;
   }
 
-  /* ── Empty state ── */
+  /* â”€â”€ Empty state â”€â”€ */
   .empty-state {
     @apply flex flex-col items-center justify-center py-16 text-center;
   }
