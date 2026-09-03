@@ -69,9 +69,15 @@ export default function Businesses() {
 
   return (
     <div className="space-y-5">
-      <div className="page-header">
-        <div><h1 className="page-title">Business Profiles</h1><p className="page-subtitle">Manage your business entities for invoicing</p></div>
-        <button onClick={openCreate} className="btn-primary"><Plus size={15} /> Add Business</button>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4 pb-4 border-b border-white/10">
+        <div>
+          <h1 className="page-title">Business Profiles</h1>
+          <p className="page-subtitle">Manage your business entities for invoicing</p>
+        </div>
+        <button onClick={openCreate} className="btn-primary flex-shrink-0">
+          <Plus size={15} /> <span className="hidden sm:inline">Add Business</span><span className="sm:hidden">Add</span>
+        </button>
       </div>
 
       {loading ? (
