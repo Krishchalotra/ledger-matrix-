@@ -2,7 +2,7 @@
 const PDFDocument = require('pdfkit');
 const pool = require('../db/pool');
 const { protect } = require('../middleware/auth');
-PUSH THE NEW ADDITION IT GITHUB 
+
 const router = express.Router();
 router.use(protect);
 
