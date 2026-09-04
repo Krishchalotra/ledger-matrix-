@@ -77,6 +77,16 @@ export default function Businesses() {
                     {uploading ? 'Processing...' : 'Upload Logo'}
                   </button>
                   <input className="input text-xs" placeholder="Or paste image URL (https://...)" value={form.logo_url.startsWith('data:') ? '' : form.logo_url} onChange={e => setForm(p => ({ ...p, logo_url: e.target.value }))} />
+                  <div className="bg-white/5 border border-white/10 rounded-lg px-3 py-2">
+                    <p className="text-xs text-white/60 font-medium mb-1">Logo Requirements:</p>
+                    <ul className="text-xs text-white/40 space-y-0.5">
+                      <li>Min size: 100 x 100 pixels</li>
+                      <li>Ideal size: 200 x 200 pixels (square)</li>
+                      <li>Max file size: 2MB</li>
+                      <li>Formats: PNG, JPG, SVG</li>
+                      <li>Square logo recommended for best PDF fit</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
