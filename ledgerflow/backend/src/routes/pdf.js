@@ -33,7 +33,7 @@ const sname = (c) => c ? c+'-'+(STATES[c]||c) : '';
 router.get('/invoice/:id', async (req, res, next) => {
   try {
     const inv = await pool.query(
-      `SELECT i.*, c.name AS cn, c.email AS ce, c.address AS ca, c.gstin AS cg, c.phone AS cp, c.state_code AS cs, b.name AS bn, b.gstin AS bg, b.address AS ba, b.phone AS bp, b.email AS be, b.state_code AS bs FROM invoices i JOIN customers c ON c.id=i.customer_id LEFT JOIN businesses b ON b.id=i.business_id WHERE i.id=$1 AND i.user_id=$2`,
+      `SELECT i.*, c.name AS cn, c.email AS ce, c.address AS ca, c.gstin AS cg, c.phone AS cp, c.state_code AS cs, b.name AS bn, b.gstin AS bg, b.address AS ba, b.phone AS bp, b.email AS be, b.state_code AS bs, b.logo_url AS bl FROM invoices i JOIN customers c ON c.id=i.customer_id LEFT JOIN businesses b ON b.id=i.business_id WHERE i.id=$1 AND i.user_id=$2`,
       [req.params.id, req.user.id]
     );
     if (!inv.rows[0]) return res.status(404).json({ message: 'Invoice not found.' });
@@ -59,16 +59,16 @@ router.get('/invoice/:id', async (req, res, next) => {
 
     // HEADER
     dRect(ML,y,CW,88,'#ffffff');
-    if (I.logo_url && I.logo_url.startsWith('data:image')) {
+    if (I.bl && I.bl.startsWith('data:image')) {
       try {
-        const base64Data = I.logo_url.split(',')[1];
+        const base64Data = I.bl.split(',')[1];
         const imgBuffer = Buffer.from(base64Data, 'base64');
         doc.image(imgBuffer, ML+5, y+5, { width: 60, height: 60, fit: [60,60] });
       } catch(e) {
         dRect(ML+4,y+4,62,62,LG);
         doc.font('Helvetica').fontSize(7).fillColor(G).text('Logo',ML+4,y+30,{width:62,align:'center'});
       }
-    } else if (I.logo_url && I.logo_url.startsWith('http')) {
+    } else if (I.bl && I.bl.startsWith('http')) {
       dRect(ML+4,y+4,62,62,LG);
       doc.font('Helvetica').fontSize(7).fillColor(G).text('Logo',ML+4,y+30,{width:62,align:'center'});
     } else {
