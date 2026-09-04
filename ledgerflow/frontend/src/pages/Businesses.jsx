@@ -34,8 +34,8 @@ export default function Businesses() {
       const img = new window.Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        // Max 200x200 for logo
-        const MAX = 200;
+        // Resize to max 120x120 and compress heavily to stay under 50KB
+        const MAX = 120;
         let w = img.width, h = img.height;
         if (w > h) { if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; } }
         else { if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; } }
@@ -43,8 +43,8 @@ export default function Businesses() {
         canvas.height = h;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, w, h);
-        // Compress to JPEG quality 0.7 (reduces size by ~80%)
-        const compressed = canvas.toDataURL('image/jpeg', 0.7);
+        // Compress aggressively to JPEG quality 0.5 (~10-20KB output)
+        const compressed = canvas.toDataURL('image/jpeg', 0.5);
         setForm(p => ({ ...p, logo_url: compressed }));
         setUploading(false);
       };
