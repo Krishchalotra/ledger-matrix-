@@ -21,14 +21,36 @@ export default function Businesses() {
   const openCreate = () => { setEditing(null); setForm(empty); setError(''); setShowForm(true); };
   const openEdit = (b) => { setEditing(b); setForm({ name: b.name, gstin: b.gstin||'', address: b.address||'', state_code: b.state_code||'', phone: b.phone||'', email: b.email||'', logo_url: b.logo_url||'' }); setError(''); setShowForm(true); };
 
-  const handleLogoUpload = async (e) => {
+  const handleLogoUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
     if (!file.type.startsWith('image/')) { setError('Please select an image file.'); return; }
     if (file.size > 2 * 1024 * 1024) { setError('Image must be under 2MB.'); return; }
     setUploading(true);
+    setError('');
     const reader = new FileReader();
-    reader.onload = (ev) => { setForm(p => ({ ...p, logo_url: ev.target.result })); setUploading(false); };
+    reader.onload = (ev) => {
+      // Compress image using canvas before storing
+      const img = new window.Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        // Max 200x200 for logo
+        const MAX = 200;
+        let w = img.width, h = img.height;
+        if (w > h) { if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; } }
+        else { if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; } }
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        // Compress to JPEG quality 0.7 (reduces size by ~80%)
+        const compressed = canvas.toDataURL('image/jpeg', 0.7);
+        setForm(p => ({ ...p, logo_url: compressed }));
+        setUploading(false);
+      };
+      img.onerror = () => { setError('Failed to process image.'); setUploading(false); };
+      img.src = ev.target.result;
+    };
     reader.onerror = () => { setError('Failed to read image.'); setUploading(false); };
     reader.readAsDataURL(file);
   };
