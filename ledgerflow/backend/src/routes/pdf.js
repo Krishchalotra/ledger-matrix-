@@ -59,18 +59,24 @@ router.get('/invoice/:id', async (req, res, next) => {
 
     // HEADER
     dRect(ML,y,CW,88,'#ffffff');
-    if (I.bl && I.bl.startsWith('data:image')) {
+    // Fetch logo directly from businesses table as fallback
+    let logoData = I.bl;
+    if (!logoData && I.business_id) {
       try {
-        const base64Data = I.bl.split(',')[1];
+        const bizRes = await pool.query('SELECT logo_url FROM businesses WHERE id=\', [I.business_id]);
+        if (bizRes.rows[0]) logoData = bizRes.rows[0].logo_url;
+      } catch(e) {}
+    }
+
+    if (logoData && logoData.startsWith('data:image')) {
+      try {
+        const base64Data = logoData.split(',')[1];
         const imgBuffer = Buffer.from(base64Data, 'base64');
         doc.image(imgBuffer, ML+5, y+5, { width: 60, height: 60, fit: [60,60] });
       } catch(e) {
         dRect(ML+4,y+4,62,62,LG);
         doc.font('Helvetica').fontSize(7).fillColor(G).text('Logo',ML+4,y+30,{width:62,align:'center'});
       }
-    } else if (I.bl && I.bl.startsWith('http')) {
-      dRect(ML+4,y+4,62,62,LG);
-      doc.font('Helvetica').fontSize(7).fillColor(G).text('Logo',ML+4,y+30,{width:62,align:'center'});
     } else {
       dRect(ML+4,y+4,62,62,LG);
       doc.font('Helvetica').fontSize(7).fillColor(G).text('Your Logo',ML+4,y+30,{width:62,align:'center'});
